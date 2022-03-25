@@ -23,4 +23,22 @@ duck_mask = np.zeros((rows, cols), np.uint8)
 # Loading Face detector
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+#comienza la parte 2 del codigo 
+while True:
+    _, frame = cap.read()
+    duck_mask.fill(0)
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+    faces = detector(frame)
+    for face in faces:
+        landmarks = predictor(gray_frame, face)
+
+        #face coordinates
+        top_left = (landmarks.part(17).x, landmarks.part(17).y)
+        top_right = (landmarks.part(26).x, landmarks.part(26).y)
+        bottom_left = (landmarks.part(5).x, landmarks.part(5).y)
+        bottom_right = (landmarks.part(11).x, landmarks.part(11).y)
+        
+        duck_face_width = int(hypot(top_left[0] - top_right[0], 
+                                    top_left[1] - top_right[1]))
+        duck_face_height = int(duck_face_width)
