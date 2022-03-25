@@ -13,7 +13,7 @@ import numpy as np
 import dlib
 from math import hypot
 
-# Loading Camera and Nose image and Creating mask
+# Loading Camera and face image and Creating mask
 cap = cv2.VideoCapture(0)
 duck_img = cv2.imread("pikachu.png") # 276 x 276
 _, frame = cap.read()
@@ -23,6 +23,7 @@ duck_mask = np.zeros((rows, cols), np.uint8)
 # Loading Face detector
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
 #comienza la parte 2 del codigo 
 while True:
     _, frame = cap.read()
@@ -42,3 +43,28 @@ while True:
         duck_face_width = int(hypot(top_left[0] - top_right[0], 
                                     top_left[1] - top_right[1]))
         duck_face_height = int(duck_face_width)
+    
+        # Adding the new face
+        duck_face = cv2.resize(duck_img, (duck_face_width, duck_face_height))
+        duck_face_gray = cv2.cvtColor(duck_face, cv2.COLOR_BGR2GRAY)
+        _, duck_mask = cv2.threshold(duck_face_gray, 25, 255, cv2.THRESH_BINARY_INV)
+
+        duck_area = frame[top_left[1]: top_left[1] + duck_face_height,
+                          top_left[0]: top_left[0] + duck_face_width]
+        
+        no_duck_area = cv2.bitwise_and(duck_area, duck_area, mask=duck_mask)
+        
+        final_nose = cv2.add(no_duck_area, duck_face)
+
+        frame[top_left[1]: top_left[1] + duck_face_height,
+              top_left[0]: top_left[0] + duck_face_width] = final_nose 
+
+        #cv2.imshow("Nose area", duck_area)
+        #cv2.imshow("Duck mask", duck_mask)
+        #cv2.imshow("final nose", final_nose)
+
+    cv2.imshow("Frame", frame)
+
+    key = cv2.waitKey(1)
+    if key == 27:
+        break
