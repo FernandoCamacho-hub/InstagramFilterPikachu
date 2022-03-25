@@ -18,7 +18,7 @@ cap = cv2.VideoCapture(0)
 duck_img = cv2.imread("pikachu.png") # 276 x 276
 _, frame = cap.read()
 rows, cols, _ = frame.shape
-duck_mask = np.zeros((rows, cols), np.uint8)
+#duck_mask = np.zeros((rows, cols), np.uint8)
 
 # Loading Face detector
 detector = dlib.get_frontal_face_detector()
@@ -27,7 +27,7 @@ predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 #comienza la parte 2 del codigo 
 while True:
     _, frame = cap.read()
-    duck_mask.fill(0)
+    #duck_mask.fill(0)
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     faces = detector(frame)
